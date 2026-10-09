@@ -3,6 +3,11 @@ export function toBengaliDigits(num: number | string): string {
   return String(num).replace(/\d/g, (d) => bengaliDigits[parseInt(d)]);
 }
 
+export function formatPrice(price: number | string): string {
+  if (price === undefined || price === null || price === "") return "০";
+  return toBengaliDigits(price);
+}
+
 export function getBanglaDate(): string {
   const now = new Date();
   const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];

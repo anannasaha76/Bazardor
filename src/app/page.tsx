@@ -1,6 +1,16 @@
-export default function HomePage() {
+import { getAllProducts } from "@/lib/api";
+import PriceTicker from "@/components/PriceTicker";
+import HeroBanner from "@/components/HeroBanner";
+
+export default async function HomePage() {
+  const products = await getAllProducts();
+
   return (
-    <div style={{ maxWidth: 1200, margin: "40px auto", padding: "0 16px" }}>
-    </div>
+    <>
+      <PriceTicker products={products} />
+      <div className="container-main" style={{ padding: "24px 16px" }}>
+        <HeroBanner />
+      </div>
+    </>
   );
 }

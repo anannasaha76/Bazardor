@@ -12,3 +12,31 @@ body {
   background-color: var(--bg);
   color: #1a1a1a;
 }
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  animation: marquee 35s linear infinite;
+  will-change: transform;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+.container-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
