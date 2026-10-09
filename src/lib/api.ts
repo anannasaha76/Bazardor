@@ -1,3 +1,24 @@
+export interface Category {
+  slug: string;
+  nameBn: string;
+  icon: string;
+}
+
+export const CATEGORIES: Category[] = [
+  { slug: "chal", nameBn: "চাল", icon: "🍚" },
+  { slug: "dal", nameBn: "ডাল", icon: "🫘" },
+  { slug: "tel", nameBn: "তেল", icon: "🛢️" },
+  { slug: "sobji", nameBn: "সবজি", icon: "🥬" },
+  { slug: "mach", nameBn: "মাছ", icon: "🐟" },
+  { slug: "mangsho", nameBn: "মাংস", icon: "🍗" },
+  { slug: "dim-dui", nameBn: "ডিম-দুধ", icon: "🥛" },
+  { slug: "mosla", nameBn: "মসলা", icon: "🌶️" },
+];
+
+export function getCategoryBySlug(slug: string): Category | null {
+  return CATEGORIES.find((c) => c.slug === slug) || null;
+}
+
 export interface ProductMarket {
   market: string;
   division: string;
@@ -32,9 +53,19 @@ const BASE_URL = "https://api.abcz.workers.dev/api/bazardor";
 
 export async function getAllProducts(): Promise<Product[]> {
   try {
-    const res = await fetch(`${BASE_URL}/products`, {
-      next: { revalidate: 60 }, 
-    });
+    const isServer = typeof window === "undefined";
+
+    let res: Response;
+    if (isServer) {
+      // Server-side: fetch directly with Next.js caching
+      res = await fetch(`${BASE_URL}/products`, {
+        next: { revalidate: 60 },
+      } as RequestInit);
+    } else {
+      // Client-side: proxy through local API route to avoid CORS
+      res = await fetch("/api/products");
+    }
+
     if (!res.ok) throw new Error("Failed to fetch");
     const json = await res.json();
     if (Array.isArray(json)) return json;
