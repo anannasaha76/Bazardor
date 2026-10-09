@@ -1,7 +1,6 @@
-import Image from "next/image";
-
-export default function Home() {
+export default function HomePage() {
   return (
-    <h1></h1>
+    <div style={{ maxWidth: 1200, margin: "40px auto", padding: "0 16px" }}>
+    </div>
   );
 }
