@@ -7,7 +7,14 @@ export function formatPrice(price: number | string): string {
   if (price === undefined || price === null || price === "") return "০";
   return toBengaliDigits(price);
 }
-// Format change percentage with Bengali digits and arrow symbol
+
+export function formatDecimalPrice(val: number): string {
+  if (val === undefined || val === null || isNaN(val)) return "০ টাকা";
+  if (val % 1 === 0) {
+    return `${toBengaliDigits(val)} টাকা`;
+  }
+  return `${toBengaliDigits(val.toFixed(2))} টাকা`;
+}
 export function formatChange(pct: number, dir: string): string {
   if (dir === "flat") return "—০.০%";
   const absPct = Math.abs(pct);

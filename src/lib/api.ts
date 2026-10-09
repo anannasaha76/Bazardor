@@ -45,3 +45,13 @@ export async function getAllProducts(): Promise<Product[]> {
     return [];
   }
 }
+
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const products = await getAllProducts();
+  return products.find((p) => p.slug === slug || String(p.id) === slug) || null;
+}
+
+export async function getProductsByCategory(category: string): Promise<Product[]> {
+  const products = await getAllProducts();
+  return products.filter((p) => p.category === category);
+}
