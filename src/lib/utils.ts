@@ -7,7 +7,21 @@ export function formatPrice(price: number | string): string {
   if (price === undefined || price === null || price === "") return "০";
   return toBengaliDigits(price);
 }
-
+// Format change percentage with Bengali digits and arrow symbol
+export function formatChange(pct: number, dir: string): string {
+  if (dir === "flat") return "—০.০%";
+  const absPct = Math.abs(pct);
+  return `${dir === "up" ? "▲" : "▼"} ${toBengaliDigits(absPct.toFixed(1))}%`;
+}
+export function formatUnit(unit: string): string {
+  const unitMap: Record<string, string> = {
+    kg: "প্রতি কেজি",
+    litre: "প্রতি লিটার",
+    dozen: "প্রতি ডজন",
+    piece: "প্রতি পিস",
+  };
+  return unitMap[unit] || unit;
+}
 export function getBanglaDate(): string {
   const now = new Date();
   const days = ["রবিবার", "সোমবার", "মঙ্গলবার", "বুধবার", "বৃহস্পতিবার", "শুক্রবার", "শনিবার"];
