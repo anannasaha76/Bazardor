@@ -49,7 +49,7 @@ export interface Product {
   markets?: ProductMarket[];
 }
 
-const BASE_URL = "https://api.abcz.workers.dev/api/bazardor";
+const BASE_URL = "https://openapi.programming-hero.com/api/bazardor";
 
 export async function getAllProducts(): Promise<Product[]> {
   try {
@@ -57,13 +57,16 @@ export async function getAllProducts(): Promise<Product[]> {
 
     let res: Response;
     if (isServer) {
-      // Server-side: fetch directly with Next.js caching
+      
       res = await fetch(`${BASE_URL}/products`, {
         next: { revalidate: 60 },
       } as RequestInit);
     } else {
-      // Client-side: proxy through local API route to avoid CORS
+      
       res = await fetch("/api/products");
+      if (!res.ok) {
+        res = await fetch(`${BASE_URL}/products`);
+      }
     }
 
     if (!res.ok) throw new Error("Failed to fetch");
@@ -84,5 +87,50 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
 export async function getProductsByCategory(category: string): Promise<Product[]> {
   const products = await getAllProducts();
-  return products.filter((p) => p.category === category);
+  return products.filter(
+    (p) =>
+      p.category === category ||
+      (category === "dim-dudh" && p.category === "dim-dui") ||
+      (category === "dim-dui" && p.category === "dim-dudh")
+  );
+}
+
+export async function getAllCategories(): Promise<Category[]> {
+  try {
+    const isServer = typeof window === "undefined";
+    const url = `${BASE_URL}/categories`;
+    const res = await fetch(url, isServer ? ({ next: { revalidate: 60 } } as RequestInit) : undefined);
+
+    if (res.ok) {
+      const json = await res.json();
+      const data = Array.isArray(json) ? json : json?.data;
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+    }
+  } catch (err) {
+    console.warn("Categories API endpoint fetch failed, falling back to products derivation:", err);
+  }
+
+  try {
+    const products = await getAllProducts();
+    if (products && products.length > 0) {
+      const map = new Map<string, Category>();
+      products.forEach((p) => {
+        if (p.category && !map.has(p.category)) {
+          const defaultCat = CATEGORIES.find((c) => c.slug === p.category);
+          map.set(p.category, {
+            slug: p.category,
+            nameBn: p.categoryNameBn || p.categoryBn || defaultCat?.nameBn || p.category,
+            icon: p.categoryIcon || defaultCat?.icon || "🛒",
+          });
+        }
+      });
+      if (map.size > 0) return Array.from(map.values());
+    }
+  } catch (err) {
+    console.error("Error deriving categories from products:", err);
+  }
+
+  return CATEGORIES;
 }

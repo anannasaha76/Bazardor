@@ -1,80 +1,45 @@
+"use client";
+
 import Image from "next/image";
+import { useBanglaDate } from "@/lib/utils";
 
 export default function HeroBanner() {
-  return (
-    <section
-      style={{
-        background: "linear-gradient(135deg, #f0f7f2 0%, #e8f5ed 100%)",
-        borderRadius: 16,
-        padding: "36px 40px",
-        marginBottom: 32,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 24,
-        border: "1px solid #d4ead9",
-        overflow: "hidden",
-      }}
-    >
-      <div style={{ flex: 1, maxWidth: 540 }}>
-        <div
-          style={{
-            display: "inline-block",
-            background: "#1a7a3c",
-            color: "white",
-            padding: "4px 12px",
-            borderRadius: 20,
-            fontSize: 12,
-            fontWeight: 600,
-            marginBottom: 12,
-          }}
-        >
-          🗓️ আজকের বাজারদর
-        </div>
+  const banglaDate = useBanglaDate();
 
-        <h1
-          style={{
-            fontSize: "clamp(24px, 4vw, 34px)",
-            fontWeight: 800,
-            color: "#1a1a1a",
-            lineHeight: 1.25,
-            margin: "0 0 12px",
-          }}
-        >
+  return (
+    <section className="bg-gradient-to-br from-[#FAFCFA] to-[#F3F9F4] rounded-3xl p-8 md:p-10 mb-8 flex items-center justify-between gap-6 border border-[#E1E8E1] overflow-hidden">
+      <div className="flex-1 max-w-[540px]">
+        {banglaDate ? (
+          <div className="inline-block bg-[#E5F3E7] text-[#05893E] px-3.5 py-1 rounded-full text-xs font-semibold mb-3">
+            {banglaDate}
+          </div>
+        ) : (
+          <div className="h-6 w-36 bg-[#E5F3E7] rounded-full animate-pulse mb-3" />
+        )}
+
+        <h1 className="text-[clamp(24px,4vw,34px)] font-extrabold text-[#1D271F] leading-[1.25] mb-3">
           আজকের বাজারের দাম এক নজরে
         </h1>
 
-        <p style={{ fontSize: 15, color: "#555", lineHeight: 1.6, margin: "0 0 24px" }}>
-          চাল, ডাল, সবজি, মাছ, মাংস ও মসলার — বাংলাদেশের বিভিন্ন বাজারের আজকের দাম এবং পরিবর্তন দেখুন।
+        <p className="text-[15px] text-[#1D271F]/70 leading-[1.6] mb-6">
+          চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক বিস্তারিত, গড়, সর্বনিম্ন-সর্বাধিক এবং দামের পরিবর্তন এক জায়গায়।
         </p>
 
         <a
-          href="#products"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            background: "#1a7a3c",
-            color: "white",
-            padding: "12px 26px",
-            borderRadius: 10,
-            fontWeight: 700,
-            fontSize: 15,
-            textDecoration: "none",
-            boxShadow: "0 4px 14px rgba(26,122,60,0.25)",
-          }}
+          href="#all-products"
+          className="inline-flex items-center gap-2 bg-[#05893E] text-[#F3FBF4] px-5 py-2.5 rounded-lg font-semibold text-sm no-underline shadow-[#047F39] transition-colors"
         >
-          🛒 সব দাম দেখুন
+          সব পণ্য দেখুন
         </a>
       </div>
 
-      <div style={{ flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div className="shrink-0 flex items-center justify-center">
         <Image
           src="/bazar-hero.png"
           alt="বাজারের ঝুড়ি"
           width={220}
           height={220}
-          style={{ objectFit: "contain", filter: "drop-shadow(0 8px 16px rgba(0,0,0,0.1))" }}
+          className="object-contain drop-shadow-[0_8px_16px_rgba(0,0,0,0.08)]"
           priority
         />
       </div>

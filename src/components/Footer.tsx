@@ -1,11 +1,11 @@
 export default function Footer() {
   return (
-    <footer style={{ background: "white", borderTop: "1px solid #e8ede8", marginTop: 40 }}>
-      <div className="container-main" style={{ padding: "20px 16px", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <div style={{ fontSize: 14, color: "#444", fontWeight: 500 }}>
+    <footer className="bg-[#FAFCFA] border-t border-[#E1E8E1] mt-10">
+      <div className="max-w-[1100px] mx-auto px-4 py-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="text-sm text-[#1D271F] font-medium">
           বাজার দর — প্রয়োজনীয় পণ্যের দাম এক নজরে।
         </div>
-        <div style={{ fontSize: 13, color: "#888", maxWidth: 420, textAlign: "right" }}>
+        <div className="text-xs text-[#1D271F] max-w-[420px] text-right">
           সকল দাম সম্ভাব্য; বাজার অবস্থার ওপর নির্ভর করে পরিবর্তিত হয়।
         </div>
       </div>

@@ -1,37 +1,46 @@
 "use client";
-
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
-import { getBanglaDate } from "@/lib/utils";
-import { Suspense, useState, useEffect } from "react";
+import { useBanglaDate } from "@/lib/utils";
+import { CATEGORIES as INITIAL_CATEGORIES, getAllCategories, Category } from "@/lib/api";
+import { Suspense, useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-
-const CATEGORIES = [
-  { slug: "chal", nameBn: "চাল", icon: "🍚" },
-  { slug: "dal", nameBn: "ডাল", icon: "🫘" },
-  { slug: "tel", nameBn: "তেল", icon: "🛢️" },
-  { slug: "sobji", nameBn: "সবজি", icon: "🥬" },
-  { slug: "mach", nameBn: "মাছ", icon: "🐟" },
-  { slug: "mangsho", nameBn: "মাংস", icon: "🍗" },
-  { slug: "dim-dui", nameBn: "ডিম-দুধ", icon: "🥛" },
-  { slug: "mosla", nameBn: "মসলা", icon: "🌶️" },
-];
 
 function NavbarContent() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
-  const [banglaDate, setBanglaDate] = useState("");
+  const banglaDate = useBanglaDate();
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setBanglaDate(getBanglaDate());
+    let isMounted = true;
+    getAllCategories().then((data) => {
+    if (isMounted && data && data.length > 0) {
+        setCategories(data);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  const activeCategory = CATEGORIES.find((c) => pathname.startsWith(`/category/${c.slug}`))?.slug;
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+    if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const activeCategory = categories.find((c) => pathname.startsWith(`/category/${c.slug}`))?.slug;
 
   const handleSignOut = async () => {
     await signOut();
@@ -41,64 +50,91 @@ function NavbarContent() {
   };
 
   return (
-    <header style={{ background: "white", borderBottom: "1px solid #e8ede8", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 1px 8px rgba(0,0,0,0.06)" }}>
-      <div className="container-main" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}>
+    <header className="bg-[#FAFCFA] border-b border-[#e8ede8] sticky top-0 z-[100] shadow-[0_1px_8px_rgba(0,0,0,0.06)]">
+      <div className="max-w-[1100px] mx-auto px-4 py-2.5 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-          <div style={{ width: 40, height: 40, borderRadius: 10, overflow: "hidden", background: "#e8f5ed", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Image src="/logo-icon.png" alt="বাজার দর" width={36} height={36} style={{ objectFit: "contain" }} />
-          </div>
+        <Link href="/" className="flex items-center gap-2.5 no-underline">
+        <div className="w-11 h-11 bg-[#05893E] rounded-[14px] shrink-0 flex items-center justify-center">
+          <Image
+            src="/logo-icon.png"
+            alt="বাজার দর"
+            width={26}
+            height={26}
+            unoptimized
+            className="w-[15px] h-[15px] object-contain"
+          />
+        </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 18, color: "#1a1a1a", lineHeight: 1.1 }}>বাজার দর</div>
-            <div style={{ fontSize: 11, color: "#888", lineHeight: 1 }}>{banglaDate}</div>
+            <div className="font-bold text-lg text-[#1D271F] leading-tight">বাজার দর</div>
+            <div className="text-[11px] text-[#1D271F] leading-none">{banglaDate}</div>
           </div>
         </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div className="flex items-center gap-2.5">
           {session?.user ? (
-            <div style={{ position: "relative" }}>
+            <div className="relative" ref={profileRef}>
               <button
                 id="profile-btn"
                 onClick={() => setProfileOpen(!profileOpen)}
-                style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", padding: "6px 10px", borderRadius: 8, transition: "background 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#f0f2f0")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
+                className="flex items-center gap-2 bg-transparent border-0 cursor-pointer px-2.5 py-1.5 rounded-lg transition-colors hover:bg-[#f0f2f0]"
               >
-                <div style={{ width: 34, height: 34, borderRadius: "50%", background: "#1a7a3c", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 700, fontSize: 15 }}>
+                <div className="w-[34px] h-[34px] rounded-full bg-[#1a7a3c] flex items-center justify-center text-white font-bold text-sm">
                   {session.user.name?.charAt(0) || "U"}
                 </div>
-                <span style={{ fontWeight: 600, fontSize: 14, color: "#1a1a1a" }}>{session.user.name?.split(" ")[0]}</span>
-                <span style={{ fontSize: 12, color: "#888" }}>▾</span>
+                <span className="font-semibold text-sm text-[#1a1a1a]">{session.user.name?.split(" ")[0]}</span>
+                <span className="text-xs text-[#888]">▾</span>
               </button>
 
               {profileOpen && (
-                <div style={{ position: "absolute", right: 0, top: "calc(100% + 8px)", background: "white", border: "1px solid #e0e0e0", borderRadius: 10, boxShadow: "0 8px 24px rgba(0,0,0,0.12)", minWidth: 160, zIndex: 200, overflow: "hidden" }}>
-                  <Link href="/profile" onClick={() => setProfileOpen(false)} style={{ display: "block", padding: "10px 16px", fontSize: 14, color: "#1a1a1a", textDecoration: "none", borderBottom: "1px solid #f0f0f0" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#f9f9f9")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
-                  >
-                    👤 আমার প্রোফাইল
-                  </Link>
-                  <button onClick={handleSignOut} style={{ display: "block", width: "100%", padding: "10px 16px", fontSize: 14, color: "#e53e3e", textAlign: "left", background: "none", border: "none", cursor: "pointer" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#fff5f5")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "none")}
-                  >
-                    ⇒ সাইন আউট
-                  </button>
+                <div className="absolute right-0 top-[calc(100%+10px)] bg-white border border-[#e5e7eb] rounded-[20px] shadow-[0_12px_35px_-6px_rgba(0,0,0,0.1),0_4px_14px_-2px_rgba(0,0,0,0.04)] min-w-[260px] p-[22px_24px] z-[200]">
+                  <div className="mb-5">
+                    <div className="font-bold text-base text-[#1D271F] leading-tight">
+                      {session.user.name || "User Name"}
+                    </div>
+                    <div className="text-sm text-[#1D271F] mt-1">
+                      {session.user.email || "user@example.com"}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-3.5">
+                    <Link
+                      href="/profile"
+                      onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-2.5 text-[15px] font-medium text-[#1D271F] no-underline transition-opacity hover:opacity-75"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#4a7bb0" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                      </svg>
+                      <span>আমার প্রোফাইল</span>
+                    </Link>
+
+                    <button
+                      onClick={handleSignOut}
+                      className="flex items-center gap-2.5 text-[15px] font-medium text-[#D03739] bg-transparent border-0 cursor-pointer p-0 text-left transition-opacity hover:opacity-75"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 14L4 9l5-5" />
+                        <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11" />
+                      </svg>
+                      <span>সাইন আউট</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <Link href="/signin" id="signin-btn" style={{ padding: "8px 16px", borderRadius: 8, fontWeight: 600, fontSize: 14, color: "#1a1a1a", textDecoration: "none", border: "1.5px solid #e0e0e0", transition: "border-color 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#1a7a3c")}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "#e0e0e0")}
+              <Link
+                href="/signin"
+                id="signin-btn"
+                className="px-4 py-2 rounded-lg font-semibold text-sm text-[#1D271F] no-underline transition-colors"
               >
                 সাইন ইন
               </Link>
-              <Link href="/signup" id="signup-btn" style={{ padding: "8px 16px", borderRadius: 8, fontWeight: 600, fontSize: 14, color: "white", background: "#1a7a3c", textDecoration: "none", transition: "background 0.2s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = "#155f30")}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "#1a7a3c")}
+              <Link
+                href="/signup"
+                id="signup-btn"
+                className="px-4 py-2 rounded-lg font-semibold text-sm text-[#F3FBF4] bg-[#047F39] no-underline transition-colors"
               >
                 সাইন আপ
               </Link>
@@ -107,31 +143,25 @@ function NavbarContent() {
           <button
             id="mobile-menu-btn"
             onClick={() => setMenuOpen(!menuOpen)}
-            style={{ display: "none", background: "none", border: "none", cursor: "pointer", padding: 6 }}
-            className="mobile-menu-toggle"
+            className="hidden bg-transparent border-0 cursor-pointer p-1.5 mobile-menu-toggle"
           >
             ☰
           </button>
         </div>
       </div>
-      <div style={{ borderTop: "1px solid #f0f2f0" }}>
-        <div className="container-main" style={{ padding: "0 16px" }}>
-          <nav style={{ display: "flex", alignItems: "center", gap: 4, overflowX: "auto", padding: "8px 0", scrollbarWidth: "none" }}>
-            {CATEGORIES.map((cat) => (
+      <div className="border-t border-[#e8ede8]">
+        <div className="max-w-[1100px] mx-auto px-4">
+          <nav className="flex items-center gap-1.5 overflow-x-auto py-2 [scrollbar-width:none]">
+            {categories.map((cat) => (
               <Link
                 key={cat.slug}
                 href={`/category/${cat.slug}`}
                 id={`nav-${cat.slug}`}
-                className={activeCategory === cat.slug ? "nav-link-active" : ""}
-                style={{
-                  display: "flex", alignItems: "center", gap: 5,
-                  padding: "5px 12px", borderRadius: 20, fontSize: 14, fontWeight: 500,
-                  color: activeCategory === cat.slug ? "white" : "#333",
-                  textDecoration: "none", whiteSpace: "nowrap", transition: "all 0.2s",
-                  background: activeCategory === cat.slug ? "#1a7a3c" : "transparent",
-                }}
-                onMouseEnter={(e) => { if (activeCategory !== cat.slug) { e.currentTarget.style.background = "#e8f5ed"; e.currentTarget.style.color = "#1a7a3c"; } }}
-                onMouseLeave={(e) => { if (activeCategory !== cat.slug) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#333"; } }}
+                className={`flex items-center gap-1.5 px-3 py-1.25 rounded-full text-sm font-medium no-underline whitespace-nowrap transition-all duration-200 ${
+                  activeCategory === cat.slug
+                    ? "bg-[#047F39] text-[#F3FBF4]"
+                    : "text-[#1D271F] hover:bg-[#e8f5ed]"
+                }`}
               >
                 <span>{cat.icon}</span>
                 <span>{cat.nameBn}</span>
@@ -146,7 +176,7 @@ function NavbarContent() {
 
 export default function Navbar() {
   return (
-    <Suspense fallback={<header style={{ height: "100px", background: "white", borderBottom: "1px solid #e8ede8" }} />}>
+    <Suspense fallback={<header className="h-[100px] bg-white border-b border-[#e8ede8]" />}>
       <NavbarContent />
     </Suspense>
   );

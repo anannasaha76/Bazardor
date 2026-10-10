@@ -33,8 +33,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
         <Navbar />
-        <main style={{ flex: 1 }}>{children}</main>
-        <Footer></Footer>
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );

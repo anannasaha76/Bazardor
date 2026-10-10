@@ -1,54 +1,55 @@
 "use client";
 
-import { Product } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { Product, getAllProducts } from "@/lib/api";
 import { formatPrice, toBengaliDigits } from "@/lib/utils";
 
 interface TickerProps {
-  products: Product[];
+  products?: Product[];
 }
 
-export default function PriceTicker({ products }: TickerProps) {
+export default function PriceTicker({ products: initialProducts }: TickerProps) {
+  const [fetchedProducts, setFetchedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    if (!initialProducts || initialProducts.length === 0) {
+      getAllProducts().then((data) => {
+        if (data && data.length > 0) {
+          setFetchedProducts(data);
+        }
+      });
+    }
+  }, [initialProducts]);
+
+  const products = initialProducts && initialProducts.length > 0 ? initialProducts : fetchedProducts;
+
   if (!products || products.length === 0) return null;
   const items = [...products, ...products];
 
   return (
-    <div style={{ background: "#f7f9f7", borderBottom: "1px solid #e8ede8", overflow: "hidden", padding: "8px 0" }}>
-      <div className="ticker-track">
+    <div className="bg-[#FAFCFA] border-b border-[#E1E8E1] overflow-hidden py-2 select-none pointer-events-none">
+      <div className="ticker-track flex w-max items-center pointer-events-none">
         {items.map((p, i) => {
           const dir = p.change?.dir || "flat";
           const pct = Math.abs(p.change?.pct ?? 0).toFixed(1);
+          const changeColorClass =
+            dir === "up" ? "text-[#D03739]" : dir === "down" ? "text-[#1a7a3c]" : "text-[#888]";
+
           return (
-            <span
-              key={`${p.id}-${i}`}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "0 20px",
-                fontSize: 13,
-                whiteSpace: "nowrap",
-                borderRight: "1px solid #e0e0e0",
-                flexShrink: 0,
-              }}
+            <div
+              key={`ticker-${p.id}-${i}`}
+              className="inline-flex items-center gap-2 px-5 text-xs whitespace-nowrap border-r border-[#e0e0e0] shrink-0"
             >
-              <span>{p.image || "📦"}</span>
-              <span style={{ fontWeight: 600, color: "#1a1a1a" }}>{p.nameBn}</span>
-              <span style={{ color: "#555" }}>
+              <span className="text-base">{p.image || "📦"}</span>
+              <span className="font-semibold text-[#1D271F]">{p.nameBn}</span>
+              <span className="text-[#1D271F]">
                 {formatPrice(p.today)} টাকা/{p.unit === "kg" ? "কেজি" : p.unit === "litre" ? "লিটার" : p.unit === "dozen" ? "ডজন" : "পিস"}
               </span>
-              <span
-                style={{
-                  fontWeight: 700,
-                  color: dir === "up" ? "#e53e3e" : dir === "down" ? "#1a7a3c" : "#888",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 2,
-                }}
-              >
+              <span className={`font-bold inline-flex items-center gap-0.5 ${changeColorClass}`}>
                 <span>{dir === "up" ? "▲" : dir === "down" ? "▼" : "—"}</span>
                 <span>{toBengaliDigits(pct)}%</span>
               </span>
-            </span>
+            </div>
           );
         })}
       </div>

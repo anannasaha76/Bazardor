@@ -56,77 +56,35 @@ async function ProductDetailContent({ params }: PageProps) {
   const isDown = product.change?.dir === "down";
 
   return (
-    <div className="container-main" style={{ padding: "16px 16px 40px" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          fontSize: 13,
-          color: "#718096",
-          margin: "12px 0 16px",
-        }}
-      >
-        <Link href="/" style={{ color: "#718096", textDecoration: "none" }}>
+    <div className="max-w-[1100px] mx-auto px-4 pt-4 pb-10">
+      <div className="flex items-center gap-2 text-xs text-[#718096] my-3">
+        <Link href="/" className="text-[#718096] no-underline hover:text-[#1a7a3c]">
           হোম
         </Link>
-        <span style={{ color: "#a0aec0" }}>›</span>
+        <span className="text-[#a0aec0]">›</span>
         <Link
           href={`/category/${product.category}`}
-          style={{ color: "#718096", textDecoration: "none" }}
+          className="text-[#718096] no-underline hover:text-[#1a7a3c]"
         >
           {categoryName}
         </Link>
-        <span style={{ color: "#a0aec0" }}>›</span>
-        <span style={{ color: "#2d3748", fontWeight: 500 }}>{product.nameBn}</span>
+        <span className="text-[#a0aec0]">›</span>
+        <span className="text-[#2d3748] font-medium">{product.nameBn}</span>
       </div>
-      <div
-        style={{
-          background: "white",
-          borderRadius: 16,
-          padding: "24px 28px",
-          border: "1px solid #eef2ef",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 20,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 18, minWidth: 260 }}>
-          <div
-            style={{
-              width: 72,
-              height: 72,
-              borderRadius: 16,
-              background: "#f0f7f3",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 36,
-              flexShrink: 0,
-            }}
-          >
+      <div className="bg-white rounded-2xl p-6 md:p-7 border border-[#eef2ef] shadow-[0_1px_4px_rgba(0,0,0,0.03)] flex items-center justify-between flex-wrap gap-5">
+        <div className="flex items-center gap-4.5 min-w-[260px]">
+          <div className="w-[72px] h-[72px] rounded-2xl bg-[#f0f7f3] flex items-center justify-center text-4xl shrink-0">
             {product.image || "📦"}
           </div>
 
           <div>
-            <h1
-              style={{
-                fontSize: "clamp(20px, 3vw, 24px)",
-                fontWeight: 800,
-                color: "#1a202c",
-                margin: "0 0 4px 0",
-                lineHeight: 1.2,
-              }}
-            >
+            <h1 className="text-[clamp(20px,3vw,24px)] font-extrabold text-[#1a202c] mb-1 leading-tight">
               {product.nameBn}
             </h1>
-            <div style={{ fontSize: 13, color: "#718096", marginBottom: 6 }}>
+            <div className="text-xs text-[#718096] mb-1.5">
               প্রতি {unitName} · {categoryName}
             </div>
-            <div style={{ fontSize: 13, color: "#4a5568" }}>
+            <div className="text-xs text-[#4a5568]">
               গতকালের তুলনায় আজ দাম{" "}
               {isUp ? (
                 <span>
@@ -142,43 +100,23 @@ async function ProductDetailContent({ params }: PageProps) {
             </div>
           </div>
         </div>
-        <div
-          style={{
-            background: "#f7faf8",
-            border: "1px solid #edf2ee",
-            borderRadius: 12,
-            padding: "12px 28px",
-            textAlign: "center",
-            minWidth: 140,
-          }}
-        >
-          <div style={{ fontSize: 12, color: "#718096", marginBottom: 2 }}>আজকের দাম</div>
-          <div
-            style={{
-              fontSize: 34,
-              fontWeight: 800,
-              color: "#1a202c",
-              lineHeight: 1.1,
-            }}
-          >
+        <div className="bg-[#f7faf8] border border-[#edf2ee] rounded-xl px-7 py-3 text-center min-w-[140px]">
+          <div className="text-xs text-[#718096] mb-0.5">আজকের দাম</div>
+          <div className="text-3xl font-extrabold text-[#1a202c] leading-tight">
             {toBengaliDigits(product.today)}
           </div>
-          <div style={{ fontSize: 12, color: "#718096", marginTop: 2, marginBottom: 8 }}>
+          <div className="text-xs text-[#718096] mt-0.5 mb-2">
             টাকা / {unitName}
           </div>
           <div>
             <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 4,
-                padding: "2px 10px",
-                borderRadius: 20,
-                fontSize: 12,
-                fontWeight: 700,
-                background: isUp ? "#fef2f2" : isDown ? "#f0fdf4" : "#f3f4f6",
-                color: isUp ? "#dc2626" : isDown ? "#16a34a" : "#6b7280",
-              }}
+              className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${
+                isUp
+                  ? "bg-[#fef2f2] text-[#dc2626]"
+                  : isDown
+                  ? "bg-[#f0fdf4] text-[#16a34a]"
+                  : "bg-[#f3f4f6] text-[#6b7280]"
+              }`}
             >
               <span>{isUp ? "▲" : isDown ? "▼" : "—"}</span>
               <span>
@@ -188,172 +126,58 @@ async function ProductDetailContent({ params }: PageProps) {
           </div>
         </div>
       </div>
-      <div
-        style={{
-          background: "white",
-          borderRadius: 16,
-          padding: "32px",
-          border: "1px solid #eef2ef",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
-          marginTop: 24,
-        }}
-      >
-        <div style={{ marginBottom: 36 }}>
-          <h2
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: "#1a202c",
-              margin: "0 0 16px 0",
-            }}
-          >
+      <div className="bg-white rounded-2xl p-8 border border-[#eef2ef] shadow-[0_1px_4px_rgba(0,0,0,0.03)] mt-6">
+        <div className="mb-9">
+          <h2 className="text-lg font-bold text-[#1a202c] mb-4">
             দামের সারসংক্ষেপ
           </h2>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: 16,
-            }}
-          >
-            <div
-              style={{
-                background: "white",
-                border: "1px solid #e8f2ea",
-                borderRadius: 12,
-                padding: "18px 20px",
-              }}
-            >
-              <div style={{ fontSize: 12, color: "#718096", marginBottom: 4 }}>সর্বনিম্ন দাম</div>
-              <div
-                style={{
-                  fontSize: 22,
-                  fontWeight: 800,
-                  color: "#16a34a",
-                  marginBottom: 4,
-                }}
-              >
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bg-white border border-[#e8f2ea] rounded-xl p-5">
+              <div className="text-xs text-[#718096] mb-1">সর্বনিম্ন দাম</div>
+              <div className="text-2xl font-extrabold text-[#16a34a] mb-1">
                 {toBengaliDigits(overallMin)} টাকা
               </div>
-              <div style={{ fontSize: 11, color: "#a0aec0" }}>সবচেয়ে কম দামের বাজার</div>
+              <div className="text-[11px] text-[#a0aec0]">সবচেয়ে কম দামের বাজার</div>
             </div>
-            <div
-              style={{
-                background: "white",
-                border: "1px solid #fee2e2",
-                borderRadius: 12,
-                padding: "18px 20px",
-              }}
-            >
-              <div style={{ fontSize: 12, color: "#718096", marginBottom: 4 }}>সর্বাধিক দাম</div>
-              <div
-                style={{
-                  fontSize: 22,
-                  fontWeight: 800,
-                  color: "#dc2626",
-                  marginBottom: 4,
-                }}
-              >
+            <div className="bg-white border border-[#fee2e2] rounded-xl p-5">
+              <div className="text-xs text-[#718096] mb-1">সর্বাধিক দাম</div>
+              <div className="text-2xl font-extrabold text-[#dc2626] mb-1">
                 {toBengaliDigits(overallMax)} টাকা
               </div>
-              <div style={{ fontSize: 11, color: "#a0aec0" }}>সবচেয়ে বেশি দামের বাজার</div>
+              <div className="text-[11px] text-[#a0aec0]">সবচেয়ে বেশি দামের বাজার</div>
             </div>
-            <div
-              style={{
-                background: "white",
-                border: "1px solid #e8f2ea",
-                borderRadius: 12,
-                padding: "18px 20px",
-              }}
-            >
-              <div style={{ fontSize: 12, color: "#718096", marginBottom: 4 }}>গড় দাম</div>
-              <div
-                style={{
-                  fontSize: 22,
-                  fontWeight: 800,
-                  color: "#16a34a",
-                  marginBottom: 4,
-                }}
-              >
+            <div className="bg-white border border-[#e8f2ea] rounded-xl p-5">
+              <div className="text-xs text-[#718096] mb-1">গড় দাম</div>
+              <div className="text-2xl font-extrabold text-[#16a34a] mb-1">
                 {toBengaliDigits(averagePrice)} টাকা
               </div>
-              <div style={{ fontSize: 11, color: "#a0aec0" }}>প্রতি {unitName}-এর হিসাবে</div>
+              <div className="text-[11px] text-[#a0aec0]">প্রতি {unitName}-এর হিসাবে</div>
             </div>
           </div>
         </div>
         <div>
-          <h2
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: "#1a202c",
-              margin: "0 0 16px 0",
-            }}
-          >
+          <h2 className="text-lg font-bold text-[#1a202c] mb-4">
             বাজারভিত্তিক আজকের দাম
           </h2>
 
-          <div style={{ overflowX: "auto", margin: "0 -8px", padding: "0 8px" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                textAlign: "left",
-                minWidth: 540,
-              }}
-            >
+          <div className="overflow-x-auto -mx-2 px-2">
+            <table className="w-full border-collapse text-left min-w-[540px]">
               <thead>
-                <tr style={{ borderBottom: "1px solid #edf2ee" }}>
-                  <th
-                    style={{
-                      padding: "14px 16px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#718096",
-                    }}
-                  >
+                <tr className="border-b border-[#edf2ee]">
+                  <th className="p-3.5 px-4 text-xs font-semibold text-[#718096]">
                     বাজার
                   </th>
-                  <th
-                    style={{
-                      padding: "14px 16px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#718096",
-                    }}
-                  >
+                  <th className="p-3.5 px-4 text-xs font-semibold text-[#718096]">
                     বিভাগ
                   </th>
-                  <th
-                    style={{
-                      padding: "14px 16px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#718096",
-                    }}
-                  >
+                  <th className="p-3.5 px-4 text-xs font-semibold text-[#718096]">
                     সর্বনিম্ন
                   </th>
-                  <th
-                    style={{
-                      padding: "14px 16px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#718096",
-                    }}
-                  >
+                  <th className="p-3.5 px-4 text-xs font-semibold text-[#718096]">
                     সর্বাধিক
                   </th>
-                  <th
-                    style={{
-                      padding: "14px 16px",
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "#718096",
-                      textAlign: "right",
-                    }}
-                  >
+                  <th className="p-3.5 px-4 text-xs font-semibold text-[#718096] text-right">
                     গড়
                   </th>
                 </tr>
@@ -364,39 +188,21 @@ async function ProductDetailContent({ params }: PageProps) {
                   return (
                     <tr
                       key={`${m.market}-${index}`}
-                      style={{
-                        borderBottom: "1px solid #f0f4f1",
-                        transition: "background 0.15s",
-                      }}
+                      className="border-b border-[#f0f4f1] transition-colors hover:bg-[#fafdfa]"
                     >
-                      <td
-                        style={{
-                          padding: "14px 16px",
-                          fontSize: 14,
-                          fontWeight: 600,
-                          color: "#1a202c",
-                        }}
-                      >
+                      <td className="p-3.5 px-4 text-sm font-semibold text-[#1a202c]">
                         {m.market}
                       </td>
-                      <td style={{ padding: "14px 16px", fontSize: 14, color: "#4a5568" }}>
+                      <td className="p-3.5 px-4 text-sm text-[#4a5568]">
                         {m.division}
                       </td>
-                      <td style={{ padding: "14px 16px", fontSize: 14, color: "#4a5568" }}>
+                      <td className="p-3.5 px-4 text-sm text-[#4a5568]">
                         {toBengaliDigits(m.min)} টাকা
                       </td>
-                      <td style={{ padding: "14px 16px", fontSize: 14, color: "#4a5568" }}>
+                      <td className="p-3.5 px-4 text-sm text-[#4a5568]">
                         {toBengaliDigits(m.max)} টাকা
                       </td>
-                      <td
-                        style={{
-                          padding: "14px 16px",
-                          fontSize: 14,
-                          fontWeight: 700,
-                          color: "#1a202c",
-                          textAlign: "right",
-                        }}
-                      >
+                      <td className="p-3.5 px-4 text-sm font-bold text-[#1a202c] text-right">
                         {formatDecimalPrice(avg)}
                       </td>
                     </tr>
@@ -415,14 +221,8 @@ export default function ProductDetailPage({ params }: PageProps) {
   return (
     <Suspense
       fallback={
-        <div
-          className="container-main"
-          style={{ padding: "40px 16px", display: "flex", justifyContent: "center" }}
-        >
-          <div
-            className="skeleton"
-            style={{ width: "100%", maxWidth: 900, height: 450, borderRadius: 16 }}
-          />
+        <div className="max-w-[1100px] mx-auto px-4 py-10 flex justify-center">
+          <div className="animate-pulse bg-[#e8ede8] w-full max-w-[900px] h-[450px] rounded-2xl" />
         </div>
       }
     >

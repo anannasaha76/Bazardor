@@ -1,3 +1,5 @@
+import { useSyncExternalStore } from "react";
+
 export function toBengaliDigits(num: number | string): string {
   const bengaliDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
   return String(num).replace(/\d/g, (d) => bengaliDigits[parseInt(d)]);
@@ -41,4 +43,14 @@ export function getBanglaDate(): string {
   const month = months[now.getMonth()];
   const year = toBengaliDigits(now.getFullYear());
   return `${day}, ${date} ${month}, ${year}`;
+}
+
+const emptySubscribe = () => () => {};
+
+export function useBanglaDate(): string {
+  return useSyncExternalStore(
+    emptySubscribe,
+    getBanglaDate,
+    () => ""
+  );
 }

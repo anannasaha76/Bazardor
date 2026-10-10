@@ -4,39 +4,24 @@ import { useSession, signOut, authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import Link from "next/link";
 
-export default function ProfilePage() {
-  const router = useRouter();
-  const { data: session, isPending } = useSession();
-  const [name, setName] = useState("");
+function ProfileNameForm({ initialName }: { initialName: string }) {
+  const [name, setName] = useState(initialName);
   const [updating, setUpdating] = useState(false);
-
-  useEffect(() => {
-    if (!isPending && !session) {
-      toast.error("প্রোফাইল দেখতে লগইন করুন");
-      router.push("/signin?redirect=/profile");
-    }
-    if (session?.user?.name) {
-      setName(session.user.name);
-    }
-  }, [session, isPending, router]);
-
-  const handleSignOut = async () => {
-    await signOut();
-    toast.success("সফলভাবে সাইন আউট হয়েছেন");
-    router.push("/");
-  };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!name.trim()) {
       toast.error("নাম দিন");
       return;
     }
+
     setUpdating(true);
+
     try {
-      const res = await authClient.updateUser({ name });
+      const res = await authClient.updateUser({ name: name.trim() });
+
       if (res.error) {
         toast.error("আপডেট ব্যর্থ হয়েছে");
       } else {
@@ -49,70 +34,121 @@ export default function ProfilePage() {
     }
   };
 
+  return (
+    <div className="bg-[#FAFCFA] rounded-2xl p-5 md:p-6 border border-[#E3EBE4]">
+      <h2 className="text-sm font-bold text-[#1D271F] mb-8">
+        তথ্য
+      </h2>
+
+      <form onSubmit={handleUpdate} className="flex flex-col gap-3.5 px-1 md:px-3">
+        <div>
+          <label
+            htmlFor="profile-name"
+            className="block text-xs font-semibold text-[#1D271F] mb-1.5"
+          >
+            নাম
+          </label>
+
+          <input
+            id="profile-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full px-3.5 py-2.5 border border-[#E0E8E1] rounded-lg text-sm text-[#1D271F] bg-transparent outline-none focus:border-[#05893E] focus:ring-2 focus:ring-[#05893E]/10 transition-colors"
+          />
+        </div>
+
+        <button
+          id="update-btn"
+          type="submit"
+          disabled={updating}
+          className="w-full bg-[#05893E] text-[#F3FBF4] py-2.5 px-5 rounded-lg font-semibold text-sm border-0 cursor-pointer hover:bg-[#155F30] active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {updating ? "আপডেট হচ্ছে..." : "আপডেট"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default function ProfilePage() {
+  const router = useRouter();
+  const { data: session, isPending } = useSession();
+
+  useEffect(() => {
+    if (!isPending && !session) {
+      toast.error("প্রোফাইল দেখতে লগইন করুন");
+      router.push("/signin?redirect=/profile");
+    }
+  }, [session, isPending, router]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("সফলভাবে সাইন আউট হয়েছেন");
+      router.push("/");
+    } catch {
+      toast.error("সাইন আউট করা যায়নি। আবার চেষ্টা করুন।");
+    }
+  };
+
   if (isPending) {
     return (
-      <div className="container-main" style={{ padding: "40px 16px" }}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
-          <div className="skeleton" style={{ width: 100, height: 100, borderRadius: "50%" }} />
+      <main className="min-h-screen bg-[#F0F5F0]">
+        <div className="max-w-[1100px] mx-auto px-4 py-8">
+          <div className="animate-pulse bg-[#E1EAE2] h-7 w-[200px] mb-2 rounded" />
+          <div className="animate-pulse bg-[#E1EAE2] h-4 w-[280px] mb-6 rounded" />
+          <div className="animate-pulse bg-white border border-[#E3EBE4] h-24 rounded-2xl" />
         </div>
-        <div className="skeleton" style={{ height: 28, width: 200, margin: "0 auto 8px" }} />
-        <div className="skeleton" style={{ height: 16, width: 300, margin: "0 auto 24px" }} />
-      </div>
+      </main>
     );
   }
 
   if (!session) return null;
 
   return (
-    <div className="container-main" style={{ padding: "32px 16px" }}>
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-        <div style={{ width: 100, height: 100, borderRadius: "50%", background: "#e8f5ed", border: "4px solid #d4ead9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, color: "#1a7a3c", fontWeight: 800 }}>
-          {session.user.name?.charAt(0) || "U"}
-        </div>
-      </div>
+    <main className="min-h-screen bg-[#F0F5F0]">
+      <div className="max-w-[680px] mx-auto px-4 py-6 md:py-8">
+        <h1 className="text-xl md:text-2xl font-extrabold text-[#1D271F] mb-1">
+          আমার প্রোফাইল
+        </h1>
 
-      <h1 style={{ fontSize: 22, fontWeight: 800, color: "#1a1a1a", textAlign: "center", marginBottom: 4 }}>আমার প্রোফাইল</h1>
-      <p style={{ fontSize: 13, color: "#888", textAlign: "center", marginBottom: 28 }}>আপনার আকাউন্টের তথ্য এখানে দেখুন।</p>
-      <div style={{ maxWidth: 520, margin: "0 auto", display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ background: "white", borderRadius: 14, padding: "16px 20px", border: "1px solid #eaeaea", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#1a7a3c", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 20, fontWeight: 700, flexShrink: 0 }}>
+        <p className="text-xs text-[#1D271F]/65 mb-6">
+          আপনার আকাউন্টের তথ্য এখানে দেখুন।
+        </p>
+        <div className="bg-[#FAFCFA] rounded-2xl p-4 md:p-5 border border-[#E3EBE4] flex items-center justify-between gap-4 flex-wrap mb-5">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div className="w-16 h-16 rounded-xl bg-[#05893E] border border-[#D4EAD9] flex items-center justify-center text-2xl text-white font-extrabold shrink-0">
               {session.user.name?.charAt(0) || "U"}
             </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: 16, color: "#1a1a1a" }}>{session.user.name}</div>
-              <div style={{ fontSize: 13, color: "#888" }}>{session.user.email}</div>
+
+            <div className="min-w-0">
+              <div className="font-bold text-base text-[#1D271F] break-words">
+                {session.user.name}
+              </div>
+
+              <div className="text-sm text-[#1D271F]/65 break-all">
+                {session.user.email}
+              </div>
             </div>
           </div>
+
           <button
             id="signout-btn"
             onClick={handleSignOut}
-            style={{ padding: "8px 14px", borderRadius: 8, fontSize: 13, fontWeight: 600, color: "#e53e3e", background: "transparent", border: "1.5px solid #e53e3e", cursor: "pointer", display: "flex", alignItems: "center", gap: 6, transition: "all 0.2s", whiteSpace: "nowrap" }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "#fff5f5"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+            className="px-3.5 py-2 rounded-lg text-xs font-semibold text-[#D03739] bg-transparent border border-[#D03739] cursor-pointer flex items-center gap-1.5 transition-colors hover:bg-[#FFF5F5] whitespace-nowrap"
           >
-            ⇒ সাইন আউট
+            <span aria-hidden="true">↪</span>
+            সাইন আউট
           </button>
         </div>
-        <div style={{ background: "white", borderRadius: 14, padding: "20px 20px", border: "1px solid #eaeaea" }}>
-          <h2 style={{ fontSize: 15, fontWeight: 700, color: "#1a1a1a", marginBottom: 16 }}>তথ্য</h2>
-          <form onSubmit={handleUpdate} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#555", marginBottom: 6 }}>নাম</label>
-              <input
-                id="profile-name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="form-input"
-              />
-            </div>
-            <button id="update-btn" type="submit" className="btn-primary" disabled={updating}>
-              {updating ? "আপডেট হচ্ছে..." : "আপডেট"}
-            </button>
-          </form>
-        </div>
+
+        <ProfileNameForm
+          key={session.user.id}
+          initialName={session.user.name || ""}
+        />
       </div>
-    </div>
+    </main>
   );
 }
+
