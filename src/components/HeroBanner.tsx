@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useBanglaDate } from "@/lib/utils";
+import { useBanglaDate } from "@/lib/use-bangla-date";
 
 export default function HeroBanner() {
   const banglaDate = useBanglaDate();

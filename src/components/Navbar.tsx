@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
-import { useBanglaDate } from "@/lib/utils";
+import { useBanglaDate } from "@/lib/use-bangla-date";
 import { CATEGORIES as INITIAL_CATEGORIES, getAllCategories, Category } from "@/lib/api";
 import { Suspense, useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
