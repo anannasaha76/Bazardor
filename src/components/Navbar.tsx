@@ -61,7 +61,7 @@ function NavbarContent() {
             width={26}
             height={26}
             unoptimized
-            className="w-[15px] h-[15px] object-contain"
+            className="w-[23px] h-[23px] object-contain"
           />
         </div>
           <div>

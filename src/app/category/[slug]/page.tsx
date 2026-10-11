@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { Product, Category, getAllCategories, getProductsByCategory, getCategoryBySlug } from "@/lib/api";
 import ProductCard from "@/components/ProductCard";
@@ -20,6 +20,23 @@ function CategoryContent() {
   const [notFound, setNotFound] = useState(false);
   const [sort, setSort] = useState<SortOption>("default");
   const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
+
+  
+  useEffect(() => {
+    if (!sortOpen) return;
+    const handle = (e: MouseEvent | TouchEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handle);
+    document.addEventListener("touchstart", handle);
+    return () => {
+      document.removeEventListener("mousedown", handle);
+      document.removeEventListener("touchstart", handle);
+    };
+  }, [sortOpen]);
 
   useEffect(() => {
     if (!slug) return;
@@ -107,25 +124,28 @@ function CategoryContent() {
         )}
       </div>
 
-      <div className="bg-white rounded-xl px-5 py-3 mb-4 border border-[#eaeaea] flex items-center justify-between sm:justify-end gap-3">
-        
+      
+      <div className="relative bg-white rounded-xl px-4 sm:px-5 py-3 mb-4 border border-[#eaeaea] flex items-center justify-end gap-3">
         <div className="flex items-center gap-2">
           <span className="text-xs text-[#1D271F]/70">সাজান:</span>
-          <div className="relative">
+          
+          <div className="sm:relative" ref={sortRef}>
             <button
               id="sort-btn"
               onClick={() => setSortOpen(!sortOpen)}
-              className="flex items-center gap-1.5 px-3 py-1.5 border border-[#e0e0e0] rounded-lg text-xs font-medium bg-white cursor-pointer text-[#1a1a1a] hover:border-[#1a7a3c] transition-colors"
+              aria-haspopup="listbox"
+              aria-expanded={sortOpen}
+              className="flex items-center gap-1.5 px-3 py-2 sm:py-1.5 border border-[#e0e0e0] rounded-lg text-xs font-medium bg-white cursor-pointer text-[#1a1a1a] hover:border-[#1a7a3c] transition-colors whitespace-nowrap"
             >
               {sortLabels[sort]} <span className="text-[10px]">▾</span>
             </button>
             {sortOpen && (
-              <div className="absolute right-0 top-[calc(100%+4px)] bg-white border border-[#e0e0e0] rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.10)] min-w-[200px] z-50 overflow-hidden">
+              <div className="absolute left-0 right-0 top-[calc(100%+4px)] sm:left-auto sm:right-0 sm:w-max sm:min-w-[200px] bg-white border border-[#e0e0e0] rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 overflow-hidden">
                 {(Object.entries(sortLabels) as [SortOption, string][]).map(([key, label]) => (
                   <button
                     key={key}
                     onClick={() => { setSort(key); setSortOpen(false); }}
-                    className={`block w-full px-4 py-2.5 text-left text-xs border-0 cursor-pointer ${sort === key ? "bg-[#e8f5ed] text-[#1a7a3c] font-bold" : "bg-white text-[#1a1a1a] font-normal hover:bg-[#f9f9f9]"
+                    className={`block w-full px-4 py-3 sm:py-2.5 text-left text-xs border-0 cursor-pointer whitespace-nowrap ${sort === key ? "bg-[#e8f5ed] text-[#1a7a3c] font-bold" : "bg-white text-[#1a1a1a] font-normal hover:bg-[#f9f9f9]"
                       }`}
                   >
                     {label}
@@ -136,11 +156,12 @@ function CategoryContent() {
           </div>
         </div>
       </div>
-      <div className="mb-4"  >
-      <span className="text-xs text-[#1D271F]/70">
+
+      <div className="mb-4">
+        <span className="text-xs text-[#1D271F]/70">
           {!loading && `মোট ${toBengaliDigits(sortedProducts.length)} টি পণ্য দেখানো হচ্ছে`}
         </span>
-        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {loading
