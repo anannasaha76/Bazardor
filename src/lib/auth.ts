@@ -4,29 +4,42 @@ import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
 
 const uri = process.env.MONGODB_URI;
+const baseURL = process.env.BETTER_AUTH_URL;
+const secret = process.env.BETTER_AUTH_SECRET;
 
 if (!uri) {
   throw new Error("MONGODB_URI is missing from environment variables");
 }
 
-const baseURL = process.env.BETTER_AUTH_URL;
-
 if (!baseURL) {
   throw new Error("BETTER_AUTH_URL is missing from environment variables");
 }
 
-const client = new MongoClient(uri);
+if (!secret) {
+  throw new Error("BETTER_AUTH_SECRET is missing from environment variables");
+}
+
+const globalForMongo = globalThis as typeof globalThis & {
+  mongoClient?: MongoClient;
+};
+
+const client =
+  globalForMongo.mongoClient ?? new MongoClient(uri);
+
+if (process.env.NODE_ENV !== "production") {
+  globalForMongo.mongoClient = client;
+}
+
 const db = client.db();
 
 export const auth = betterAuth({
   baseURL,
+  secret,
 
   trustedOrigins: [
     "http://localhost:3000",
     baseURL,
   ],
-
-  secret: process.env.BETTER_AUTH_SECRET,
 
   emailAndPassword: {
     enabled: true,
