@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 বাজার দর — BazarDor
 
-## Getting Started
+> প্রয়োজনীয় পণ্যের দাম এক নজরে | Bangladesh Daily Market Price Tracker
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📖 Short Description
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**বাজার দর (BazarDor)** is a real-time Bangladeshi market price tracking web application that displays the daily prices of essential commodities — rice, lentils, oil, vegetables, fish, meat, eggs/dairy, and spices — sourced from multiple markets across all divisions of Bangladesh. Built with a Bengali-first UI, it features price change indicators, market comparisons, and user authentication.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Technologies Used
 
-## Learn More
+| Technology | Purpose |
+|---|---|
+| **Next.js** (App Router) | Full-stack framework, SSR, dynamic routing |
+| **TypeScript** | Type safety across the entire codebase |
+| **Tailwind CSS** | Utility-first styling + custom design system |
+| **BetterAuth** | Authentication (email/password + Google + GitHub OAuth) |
+| **MongoDB** | User data persistence via BetterAuth MongoDB adapter |
+| **React Hot Toast** | Toast notifications for auth events |
+| **Hind Siliguri** (Google Fonts) | Bengali-optimized typography |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## ✨ 5 Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **🏷️ Real-Time Price Ticker** — An infinite scrolling marquee at the top of the page shows all product prices with ▲/▼ change indicators, providing a live-market feel.
 
-## Deploy on Vercel
+2. **📊 Price Risers & Fallers Dashboard** — The home page highlights the top 6 products whose prices increased today (▲) and top 6 that decreased (▼), giving users an at-a-glance market summary.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **🗺️ Division-wise Market Comparison** — Each product detail page (protected route) shows prices from 12 different markets grouped by Bangladesh's 8 administrative divisions (ঢাকা, চট্টগ্রাম, রাজশাহী, etc.).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **🔐 Full Authentication System** — Supports email/password registration/login plus Google and GitHub OAuth via BetterAuth, with toast notifications on all auth events and protected routes that redirect with return URL.
+
+5. **📱 Responsive Bengali-First UI** — The entire application is built with a Bengali typography system (Hind Siliguri font), Bengali numeral conversion (১২৩৪৫), and responsive grids that collapse gracefully from 3-column desktop to 1-column mobile.
+
+---
+
