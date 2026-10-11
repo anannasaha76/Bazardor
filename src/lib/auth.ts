@@ -7,28 +7,24 @@ const uri = process.env.MONGODB_URI;
 const baseURL = process.env.BETTER_AUTH_URL;
 const secret = process.env.BETTER_AUTH_SECRET;
 
-if (!uri) {
-  throw new Error("MONGODB_URI is missing from environment variables");
-}
-
-if (!baseURL) {
-  throw new Error("BETTER_AUTH_URL is missing from environment variables");
-}
-
-if (!secret) {
-  throw new Error("BETTER_AUTH_SECRET is missing from environment variables");
-}
+if (!uri) throw new Error("MONGODB_URI is missing");
+if (!baseURL) throw new Error("BETTER_AUTH_URL is missing");
+if (!secret) throw new Error("BETTER_AUTH_SECRET is missing");
 
 const globalForMongo = globalThis as typeof globalThis & {
   mongoClient?: MongoClient;
+  mongoUri?: string;
 };
+
+if (globalForMongo.mongoUri && globalForMongo.mongoUri !== uri) {
+  throw new Error("MongoDB URI changed within the same runtime");
+}
 
 const client =
   globalForMongo.mongoClient ?? new MongoClient(uri);
 
-if (process.env.NODE_ENV !== "production") {
-  globalForMongo.mongoClient = client;
-}
+globalForMongo.mongoClient = client;
+globalForMongo.mongoUri = uri;
 
 const db = client.db();
 
@@ -57,7 +53,5 @@ export const auth = betterAuth({
     },
   },
 
-  database: mongodbAdapter(db, {
-    client,
-  }),
+  database: mongodbAdapter(db, { client }),
 });
