@@ -5,6 +5,37 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
+function Avatar({
+  src,
+  name,
+  className,
+}: {
+  src?: string | null;
+  name?: string | null;
+  className: string;
+}) {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div
+      className={`${className} bg-[#05893E] border border-[#D4EAD9] flex items-center justify-center text-white font-extrabold overflow-hidden shrink-0`}
+    >
+      {src && !imgError ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={name || "Profile"}
+          referrerPolicy="no-referrer"
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        name?.charAt(0) || "U"
+      )}
+    </div>
+  );
+}
+
 function ProfileNameForm({ initialName }: { initialName: string }) {
   const [name, setName] = useState(initialName);
   const [updating, setUpdating] = useState(false);
@@ -118,9 +149,12 @@ export default function ProfilePage() {
         </p>
         <div className="bg-[#FAFCFA] rounded-2xl p-4 md:p-5 border border-[#E3EBE4] flex items-center justify-between gap-4 flex-wrap mb-5">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-16 h-16 rounded-xl bg-[#05893E] border border-[#D4EAD9] flex items-center justify-center text-2xl text-white font-extrabold shrink-0">
-              {session.user.name?.charAt(0) || "U"}
-            </div>
+            <Avatar
+              key={session.user.image ?? "no-image"}
+              src={session.user.image}
+              name={session.user.name}
+              className="w-16 h-16 rounded-xl text-2xl"
+            />
 
             <div className="min-w-0">
               <div className="font-bold text-base text-[#1D271F] break-words">
@@ -151,4 +185,3 @@ export default function ProfilePage() {
     </main>
   );
 }
-

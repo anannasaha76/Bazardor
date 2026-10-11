@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signUp, signIn } from "@/lib/auth-client";
+import { signUp, signIn,signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -37,8 +37,12 @@ export default function SignUpPage() {
       if (res.error) {
         toast.error(res.error.message || "রেজিস্ট্রেশন ব্যর্থ হয়েছে।");
       } else {
-        toast.success("আকাউন্ট তৈরি হয়েছে! লগইন পেজে যাচ্ছেন...");
-        setTimeout(() => router.push("/signin"), 1500);
+        // toast.success("আকাউন্ট তৈরি হয়েছে! লগইন পেজে যাচ্ছেন...");
+        // setTimeout(() => router.push("/signin"), 1500);
+        await signOut();
+        toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! অনুগ্রহ করে সাইন ইন করুন।");
+        router.push("/signin");
+        router.refresh();
       }
     } catch {
       toast.error("একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।");

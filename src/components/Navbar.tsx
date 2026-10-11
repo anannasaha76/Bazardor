@@ -8,6 +8,39 @@ import { CATEGORIES as INITIAL_CATEGORIES, getAllCategories, Category } from "@/
 import { Suspense, useState, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 
+function Avatar({
+  src,
+  name,
+  className,
+  textClassName,
+}: {
+  src?: string | null;
+  name?: string | null;
+  className: string;
+  textClassName: string;
+}) {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div
+      className={`${className} rounded-full bg-[#1a7a3c] flex items-center justify-center text-white font-bold overflow-hidden shrink-0 ${textClassName}`}
+    >
+      {src && !imgError ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={src}
+          alt={name || "Profile"}
+          referrerPolicy="no-referrer"
+          onError={() => setImgError(true)}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        name?.charAt(0) || "U"
+      )}
+    </div>
+  );
+}
+
 function NavbarContent() {
   const pathname = usePathname();
   const router = useRouter();
@@ -21,7 +54,7 @@ function NavbarContent() {
   useEffect(() => {
     let isMounted = true;
     getAllCategories().then((data) => {
-    if (isMounted && data && data.length > 0) {
+      if (isMounted && data && data.length > 0) {
         setCategories(data);
       }
     });
@@ -32,7 +65,7 @@ function NavbarContent() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-    if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
         setProfileOpen(false);
       }
     };
@@ -54,16 +87,16 @@ function NavbarContent() {
       <div className="max-w-[1100px] mx-auto px-4 py-2.5 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 no-underline">
-        <div className="w-11 h-11 bg-[#05893E] rounded-[14px] shrink-0 flex items-center justify-center">
-          <Image
-            src="/logo-icon.png"
-            alt="বাজার দর"
-            width={26}
-            height={26}
-            unoptimized
-            className="w-[23px] h-[23px] object-contain"
-          />
-        </div>
+          <div className="w-11 h-11 bg-[#05893E] rounded-[14px] shrink-0 flex items-center justify-center">
+            <Image
+              src="/logo-icon.png"
+              alt="বাজার দর"
+              width={26}
+              height={26}
+              unoptimized
+              className="w-[23px] h-[23px] object-contain"
+            />
+          </div>
           <div>
             <div className="font-bold text-lg text-[#1D271F] leading-tight">বাজার দর</div>
             <div className="text-[11px] text-[#1D271F] leading-none">{banglaDate}</div>
@@ -78,21 +111,36 @@ function NavbarContent() {
                 onClick={() => setProfileOpen(!profileOpen)}
                 className="flex items-center gap-2 bg-transparent border-0 cursor-pointer px-2.5 py-1.5 rounded-lg transition-colors hover:bg-[#f0f2f0]"
               >
-                <div className="w-[34px] h-[34px] rounded-full bg-[#1a7a3c] flex items-center justify-center text-white font-bold text-sm">
-                  {session.user.name?.charAt(0) || "U"}
-                </div>
-                <span className="font-semibold text-sm text-[#1a1a1a]">{session.user.name?.split(" ")[0]}</span>
+                <Avatar
+                  key={session.user.image ?? "no-image"}
+                  src={session.user.image}
+                  name={session.user.name}
+                  className="w-[34px] h-[34px]"
+                  textClassName="text-sm"
+                />
+                <span className="font-semibold text-sm text-[#1a1a1a]">
+                  {session.user.name?.split(" ")[0]}
+                </span>
                 <span className="text-xs text-[#888]">▾</span>
               </button>
 
               {profileOpen && (
                 <div className="absolute right-0 top-[calc(100%+10px)] bg-white border border-[#e5e7eb] rounded-[20px] shadow-[0_12px_35px_-6px_rgba(0,0,0,0.1),0_4px_14px_-2px_rgba(0,0,0,0.04)] min-w-[260px] p-[22px_24px] z-[200]">
-                  <div className="mb-5">
-                    <div className="font-bold text-base text-[#1D271F] leading-tight">
-                      {session.user.name || "User Name"}
-                    </div>
-                    <div className="text-sm text-[#1D271F] mt-1">
-                      {session.user.email || "user@example.com"}
+                  <div className="mb-5 flex items-center gap-3">
+                    <Avatar
+                      key={session.user.image ?? "no-image"}
+                      src={session.user.image}
+                      name={session.user.name}
+                      className="w-12 h-12"
+                      textClassName="text-lg"
+                    />
+                    <div className="min-w-0">
+                      <div className="font-bold text-base text-[#1D271F] leading-tight truncate">
+                        {session.user.name || "User Name"}
+                      </div>
+                      <div className="text-sm text-[#1D271F] mt-1 truncate">
+                        {session.user.email || "user@example.com"}
+                      </div>
                     </div>
                   </div>
 
